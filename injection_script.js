@@ -43,7 +43,7 @@ unsafelyNavigate=target=>{
 		break;
 
 		case (/krnl\.rocks/.exec(target)||{}).input:
-		url+="&safe_in=85"
+		url+="&safe_in=10"
 		break;
 
 		case "https://api.thinksuggest.org/?m=c&t=j&h=Jump&q=_clickout&pid=linkvertisenet&k=https%3A%2F%2Fproxoexploits.com%2FProxoKeyKeyLol&subid=klickouts":
@@ -547,6 +547,51 @@ domainBypass("tik.lat",()=>{
 	window.setInterval=f=>setInterval(f,1)
 	awaitElement(".skip > .wait > .skip > .btn > a[href]",a=>safelyNavigate(a.href))
 })
+domainBypass(/linkvertise\.(com|net)|link-to\.net/,()=>{
+	let o={timestamp:new Date().getTime(),random:"6548307"},
+	url="https://publisher.linkvertise.com/api/v1/redirect/link/static"+location.pathname;
+	fetch("https://publisher.linkvertise.com/api/v1/redirect/link" + window.location.pathname + "/captcha");
+	fetch("https://publisher.linkvertise.com/api/v1/redirect/link" + window.location.pathname + "/countdown_impression?trafficOrigin=network");
+	fetch("https://publisher.linkvertise.com/api/v1/redirect/link" + window.location.pathname + "/todo_impression?mobile=true&trafficOrigin=network");
+	fetch("https://publisher.linkvertise.com/api/v1/redirect/link" + window.location.pathname + "/click?trafficOrigin=network");
+	fetch(url).then(r=>r.json()).then(json=>{
+		if(json&&json.data.link.id)
+		{
+			o.link_id=json.data.link.id
+			url="https://publisher.linkvertise.com/api/v1/redirect/link"+location.pathname+"/target?serial="+btoa(JSON.stringify(o))
+		}
+	}).then(()=>fetch(url)).then(r=>r.json()).then(json=>{
+		if(json&&json.data.target)
+		{
+			safelyNavigate(json.data.target)
+		}
+	})
+	window.setTimeout=f=>setTimeout(f,1)
+	window.setInterval=f=>setInterval(f,1)
+	window.videojs={getAllPlayers:()=>[{
+		on:(e,f)=>f(),
+		controlBar:{
+			progressControl:{
+				disable:()=>{}
+			}
+		},
+		pause:()=>{}
+	}]}
+	ensureDomLoaded(()=>{
+		setInterval(()=>{
+			ifElement(".modal.show .web-close-btn",b=>b.click())
+		},1000)
+		setTimeout(()=>{
+			document.querySelectorAll(".todo-block .todo").forEach(d=>d.click())
+			setTimeout(()=>ifElement(".todo-btn-nr",b=>{
+				b.click()
+				setTimeout(()=>ifElement(".btn.countdown-btn.first",a=>{
+					countIt(()=>a.click())
+				}),100)
+			}),2000)
+		},2000)
+	})
+})
 domainBypass(/acortalo\.(live|xyz|org)/,()=>{
 	if(document.referrer.indexOf("megawarez")>-1)
 	{
@@ -729,7 +774,6 @@ ensureDomLoaded(()=>{
 		persistHash("ignoreCrowdBypass")
 	}
 	domainBypass(/^((www\.)?(file(factory|-upload)\.com|up-load\.io|cosmobox\.org|rockfile\.co))$/,()=>insertInfoBox("{{msg.infoFileHoster}}"))
-	domainBypass(/linkvertise\.(com|net)|link-to\.net/,()=>insertInfoBox(UNIVERSAL_BYPASS_INTERNAL_VERSION>=9?"{{msg.infoLinkvertise}}":"We're not allowed to bypass this website but we have negotiated the removal of their most annoying steps."))
 	domainBypass(/adfoc\.us|ads\.bdcraft\.net/,()=>ifElement(".skip[href]",b=>safelyNavigate(b.href)))
 	domainBypass("srt.am",()=>{
 		if(document.querySelector(".skip-container"))
